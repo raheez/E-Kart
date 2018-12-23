@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.example.muhammedraheezrahman.e_commerceapp.Adapter.RVAdapter;
 import com.example.muhammedraheezrahman.e_commerceapp.Model.ProductModel;
+import com.facebook.shimmer.ShimmerFrameLayout;
 
 import org.reactivestreams.Publisher;
 
@@ -41,12 +42,14 @@ public class MainActivity extends RootActivity {
     int pageNumber =0;
     ImageView im;
     List<ProductModel> productList = new ArrayList<>();
+    ShimmerFrameLayout shimmerFrameLayout;
      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView  = (RecyclerView) findViewById(R.id.rv);
         list = new ArrayList<String>();
+        shimmerFrameLayout = (ShimmerFrameLayout) findViewById(R.id.shimmer_layout);
         adapter = new RVAdapter(getApplicationContext());
         gm = new GridLayoutManager(getApplicationContext(),2,LinearLayoutManager.VERTICAL,false);
         recyclerView.setLayoutManager(gm);
@@ -94,6 +97,8 @@ public class MainActivity extends RootActivity {
                 .subscribe(new Consumer<List<ProductModel>>() {
             @Override
             public void accept(List<ProductModel> productList) throws Exception {
+              shimmerFrameLayout.stopShimmer();
+              shimmerFrameLayout.setVisibility(View.GONE);
               adapter.addToProductList(productList);
               loading = false;
 
@@ -126,6 +131,8 @@ public class MainActivity extends RootActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        shimmerFrameLayout.startShimmer();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
@@ -147,6 +154,11 @@ public class MainActivity extends RootActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shimmerFrameLayout.stopShimmer();
+     }
 
     public List<ProductModel> getProductList(){
 

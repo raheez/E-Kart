@@ -75,9 +75,9 @@ public class RVAdapter  extends RecyclerView.Adapter<ViewHolder> {
         pm = listProduct.get(position);
 
         holder.productNameTv.setText(String.valueOf(pm.getProductName()));
-        holder.oldPriceTv.setText(String.valueOf(pm.getOldPrice()));
+        holder.oldPriceTv.setText(String.valueOf(pm.getOldPrice()+" AED"));
         holder.oldPriceTv.setPaintFlags(holder.productNameTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-        holder.newPriceTv.setText(String.valueOf(pm.getNewPrice()));
+        holder.newPriceTv.setText(String.valueOf(pm.getNewPrice())+ " AED");
         Glide.with(context).load(pm.getThumbNail()).into(holder.productThumbanil);
 
     }

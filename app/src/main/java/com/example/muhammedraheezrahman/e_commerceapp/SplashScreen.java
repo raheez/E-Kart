@@ -30,7 +30,7 @@ public class SplashScreen extends RootActivity {
 
                 Intent i = new Intent(SplashScreen.this,MainActivity.class);
                 startActivity(i);
-//                finish();
+                finish();
             }
         },splashScreenDuration);
 
