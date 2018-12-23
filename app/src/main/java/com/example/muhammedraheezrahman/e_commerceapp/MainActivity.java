@@ -7,12 +7,15 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.example.muhammedraheezrahman.e_commerceapp.Adapter.RVAdapter;
+import com.example.muhammedraheezrahman.e_commerceapp.Model.ProductModel;
 
 import org.reactivestreams.Publisher;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +28,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.processors.PublishProcessor;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends RootActivity {
 
     RecyclerView recyclerView;
     List<String> list;
@@ -36,13 +39,15 @@ public class MainActivity extends AppCompatActivity {
     PublishProcessor<Integer> paginator = PublishProcessor.create();
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     int pageNumber =0;
+    ImageView im;
+    List<ProductModel> productList = new ArrayList<>();
      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView  = (RecyclerView) findViewById(R.id.rv);
         list = new ArrayList<String>();
-        adapter = new RVAdapter();
+        adapter = new RVAdapter(getApplicationContext());
         gm = new GridLayoutManager(getApplicationContext(),2,LinearLayoutManager.VERTICAL,false);
         recyclerView.setLayoutManager(gm);
 
@@ -79,21 +84,23 @@ public class MainActivity extends AppCompatActivity {
 
         Disposable disposable =  paginator
                 .onBackpressureDrop()
-                .concatMap(new Function<Integer, Publisher<List<String>>>() {
+                .concatMap(new Function<Integer, Publisher<List<ProductModel>>>() {
             @Override
-            public Publisher<List<String>> apply(@NonNull Integer integer) throws Exception {
+            public Publisher<List<ProductModel>> apply(@NonNull Integer integer) throws Exception {
                 loading =true;
                 return getData(pageNumber);
             }
         }).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<String>>() {
+                .subscribe(new Consumer<List<ProductModel>>() {
             @Override
-            public void accept(List<String> strings) throws Exception {
-              adapter.addToList(strings);
+            public void accept(List<ProductModel> productList) throws Exception {
+              adapter.addToProductList(productList);
               loading = false;
 
             }
         });
+
+
 
         compositeDisposable.add(disposable);
         paginator.onNext(pageNumber);
@@ -101,17 +108,17 @@ public class MainActivity extends AppCompatActivity {
 
      }
 
-    public Flowable<List<String>> getData(int pageNumber){
+    public Flowable<List<ProductModel>> getData(int pageNumber){
        return Flowable.just(true)
                .delay(2,TimeUnit.SECONDS)
-               .map(new Function<Boolean, List<String>>() {
+               .map(new Function<Boolean, List<ProductModel>>() {
            @Override
-           public List<String> apply(Boolean aBoolean) throws Exception {
-               List<String> list = new ArrayList<String>();
+           public List<ProductModel> apply(Boolean aBoolean) throws Exception {
+               List<ProductModel> list = new ArrayList<ProductModel>();
 
-               for (int i =1;i<=10;i++)
-               list.add("items "+ (pageNumber*10+i));
-               return list;
+//               for (int i =1;i<=10;i++)
+//               list.add("items "+ (pageNumber*10+i));
+               return getProductList();
            }
        });
     }
@@ -137,6 +144,27 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
+    }
+
+
+    public List<ProductModel> getProductList(){
+
+        productList.add( new  ProductModel("Black Head Phones",300,200,R.drawable.headphones_black));
+        productList.add(  new ProductModel("Orange Head Phones",200,100,R.drawable.headphones_orange));
+        productList.add(  new ProductModel("Black Air Conditioner",600,500,R.drawable.ac_black));
+        productList.add(  new ProductModel("Red Air Conditioner",450,200,R.drawable.ac_red));
+        productList.add(  new ProductModel("Black Camera",350,200,R.drawable.camera_black));
+        productList.add(  new ProductModel("Red Camera",350,200,R.drawable.camera_black));
+        productList.add(  new ProductModel("Lenovo Laptop",430,410,R.drawable.laptop_black));
+        productList.add(  new ProductModel("Asus Laptop",340,310,R.drawable.laptop_green));
+        productList.add(  new ProductModel("Xbox1",650,500,R.drawable.xbox_1));
+        productList.add(  new ProductModel("Xbox2",850,700,R.drawable.xbox_2));
+
+        Collections.shuffle(productList);
+        return productList;
+
+
     }
 
 

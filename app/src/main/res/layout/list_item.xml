@@ -33,7 +33,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="0.7"
+                    android:padding="10dp"
                     android:src="@drawable/iphonex"
+                    android:id="@+id/productImage"
                     android:layout_marginTop="5dp"/>
                 <TextView
                     android:layout_width="match_parent"
